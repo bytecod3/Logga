@@ -2,11 +2,6 @@
 #include <WiFi.h>
 #include <time.h>
 
-//const char* ssid = "Safaricom_B535_BA29";
-//const char* password = "YT96id2NMtL";
-
-const char* ssid = "Gakibia unit 3";
-const char* password = "password";
 
 const char* ntp_server = "pool.ntp.org";
 const long gmt_offset = 0;

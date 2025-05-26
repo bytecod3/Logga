@@ -1,3 +1,32 @@
-/tests/esp32/ntp-time/src/wificonfig.h
-misc/
+# IDE specific files
 .idea/
+.vscode/
+*.swp
+*.swo
+
+# Build directories
+build/
+bin/
+
+# Compiled files
+*.o
+*.a
+*.bin
+*.elf
+*.map
+
+# Misc
+.DS_Store
+*.log
+*.bak
+
+# Environment files
+wificonfig.h
+.env
+secrets.*
+
+# PlatformIO
+.pio/
+
+# Ignore misc folder inside tests
+/tests/**/misc/

@@ -29,13 +29,12 @@ int main() {
 
         if(kbhit()) {
             c = getch();
-            if(c == 'k') {
+            if(c == 'k') { // stop logging
                 puts("Keyboard interrupt");
                 break;
             }
         }
     }
-
 
     return EXIT_SUCCESS;
 }

@@ -8,9 +8,14 @@
 #ifndef LOGGA_H
 #define LOGGA_H
 
-#include <stdio.h> // todo: add check for embedded
+#include "config.h"
+#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+#if USE_EMBEDDED
+    #include <Arduino.h>
+#endif
 
 typedef struct Logga* Logga_Type_t; /* forward declare Logga structure */
 typedef struct SystemTime* SystemTime_t; /* to hold the current system time -> will be passed in by the user*/
@@ -20,8 +25,7 @@ typedef struct SystemTime* SystemTime_t; /* to hold the current system time -> w
  */
 
 /**
- * @brief to be used only for desktop applications where dynamic allocation is not a
- * big memory issue
+ * @brief allocate teh object we are going to be using for logging
  * @return
  */
 Logga_Type_t logga_create();
@@ -32,7 +36,9 @@ Logga_Type_t logga_create();
  * @param fname filename to log to
  * @param f_size size of the file to create
  */
- void init_logga(Logga_Type_t _logga_inst, const char* fname, uint32_t f_size);
+void init_logga(Logga_Type_t _logga_inst, const char* fname, uint32_t f_size);
+
+unsigned long get_ntp_time(Logga_Type_t obj);
 
  /**
   * @brief check the size of file to create
@@ -46,7 +52,7 @@ Logga_Type_t logga_create();
   * If the number of files is greater than the allowed number of files,
   * delete the oldest file to create space -> majorly for embedded
   * todo: add embedded usage check
-  * @param dir_name
+  * @param dir_name directory to check
   */
  void check_num_files(Logga_Type_t _logga_inst, const char* dir_name);
 
@@ -59,5 +65,21 @@ Logga_Type_t logga_create();
   */
  void write_log(Logga_Type_t _logga_inst, unsigned long t_stamp, const char* TAG, const char* LEVEL, const char* MSG);
 
+ /**
+  * @brief log data to the given file
+  * This function is for use in embedded controller
+  * @param _logga_inst
+  * @param t_stamp
+  * @param TAG
+  * @param LEVEL
+  * @param MSG
+  */
+  void log_message(Logga_Type_t _logga_inst, unsigned long t_stamp, const char* TAG, const char* LEVEL, const char* MSG);
+void log_trace(const char* tag, const char* msg);
+void log_debug(const char* tag, const char* msg);
+void log_info(const char* tag, const char* msg);
+void log_warn(const char* tag, const char* msg);
+void log_error(const char* tag, const char* msg);
+void log_fatal(const char* tag, const char* msg);
 
 #endif

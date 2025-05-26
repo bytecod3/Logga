@@ -6,6 +6,19 @@
 
 #include "logga.h"
 
+typedef struct SystemTime{
+    day,
+    yr,
+    month,
+    hr,
+    min,
+    sec,
+    msec,
+};
+
+static const char* ntp_server = "pool.ntp.org";
+static unsigned long epoch_time;
+
 typedef struct Logga {
     const char* _fname;
     uint32_t _sz;
@@ -31,6 +44,19 @@ void init_logga(Logga_Type_t obj, const char* f_name, uint32_t f_size) {
     fclose(fp);
 }
 
+unsigned long get_ntp_time(Logga_Type_t obj){
+#if NTP_ENABLE
+    // check if wifi connected
+    // you can call this function after making sure wifi is connected
+    if(WiFi.status() != WIFI_CONNECTED) {
+        Serial.println("Wifi not available. Please connect wifi");
+        return;
+    }
+#else
+#endif
+}
+
+
 void write_log(Logga_Type_t obj, unsigned long t_stamp, const char* TAG, const char* LEVEL, const char* MSG) {
     FILE* fp = fopen(obj->_fname, "a");
 
@@ -45,3 +71,7 @@ void write_log(Logga_Type_t obj, unsigned long t_stamp, const char* TAG, const c
     fclose(fp);
 }
 
+void log_trace(Logga_Type_t obj,const char* tag, const char* msg) {
+    const char* lvl = "TRACE";
+    write_log(obj, , tag, lvl, msg);
+}

@@ -5,8 +5,11 @@
  * @author Edwin Mwiti
  */
 
+
+
 #ifndef LOGGA_H
 #define LOGGA_H
+
 
 #include "config.h"
 #include <stdio.h>
@@ -15,20 +18,28 @@
 
 #if USE_EMBEDDED
     #include <Arduino.h>
+    #include <SPIFFS.h>
+    #include <time.h>
+    #include <FS.h>
 #endif
 
-typedef struct Logga* Logga_Type_t; /* forward declare Logga structure */
-typedef struct SystemTime* SystemTime_t; /* to hold the current system time -> will be passed in by the user*/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct Logga* Logga_Type_t;         /* forward declare Logga structure */
+typedef struct SystemTime* SystemTime_t;    /* to hold the current system time -> will be passed in by the user*/
 
 /**
  * Functions
  */
 
+Logga_Type_t c_log();
 /**
  * @brief allocate teh object we are going to be using for logging
  * @return
  */
-Logga_Type_t logga_create();
+uint8_t create_logga(const char* fname, uint32_t f_size);
 
 /**
  * @brief init_logga initialize a logging object
@@ -36,9 +47,15 @@ Logga_Type_t logga_create();
  * @param fname filename to log to
  * @param f_size size of the file to create
  */
-void init_logga(Logga_Type_t _logga_inst, const char* fname, uint32_t f_size);
+uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname, uint32_t f_size);
+const char* get_ntp_time(Logga_Type_t obj);
 
-unsigned long get_ntp_time(Logga_Type_t obj);
+/**
+ * @brief Initialize SPIFFS file system for ESP32
+ * @param _logga_inst
+ * @return 1 if successful
+ */
+uint8_t init_SPIFFS(Logga_Type_t _logga_inst);
 
  /**
   * @brief check the size of file to create
@@ -63,7 +80,7 @@ unsigned long get_ntp_time(Logga_Type_t obj);
   * @param LEVEL
   * @param MSG
   */
- void write_log(Logga_Type_t _logga_inst, unsigned long t_stamp, const char* TAG, const char* LEVEL, const char* MSG);
+ void write_log(Logga_Type_t _logga_inst, const char* t_stamp, const char* TAG, const char* LEVEL, const char* MSG);
 
  /**
   * @brief log data to the given file
@@ -82,4 +99,9 @@ void log_warn(const char* tag, const char* msg);
 void log_error(const char* tag, const char* msg);
 void log_fatal(const char* tag, const char* msg);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif
+

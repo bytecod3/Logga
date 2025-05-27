@@ -6,7 +6,6 @@ void get_time()  {
     char strftime_buf[64];
 
     struct tm timeinfo;
-
     time(&now);
     // set time to East African Standard time
     setenv("TZ", "GMT+3", 1);

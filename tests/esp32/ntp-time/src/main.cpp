@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <time.h>
+#include <wificonfig.h>
 
 
 const char* ntp_server = "pool.ntp.org";
@@ -9,6 +10,7 @@ const int daylight_saving = 3600;
 
 
 void printLocalTime() {
+
     struct tm timeinfo;
     if(!getLocalTime(&timeinfo)) {
         Serial.println("Failed to obtain time");

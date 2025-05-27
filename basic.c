@@ -17,7 +17,7 @@ int main() {
     init_logga(system_logger, log_file_name, F_SIZE_2MB);
 
     /* create logging tags */
-    const char* TAG = "DB";
+    const char* TAG = "DB"; /* define you tag here */
 
     char c;
     while(1) {
@@ -35,6 +35,6 @@ int main() {
             }
         }
     }
-
     return EXIT_SUCCESS;
+
 }

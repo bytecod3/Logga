@@ -1,12 +1,9 @@
 #include <Arduino.h>
 
-#ifdef __cplusplus
-    extern "C" {
-#endif
-	#include "../../../../logga.h"
-#ifdef __cplusplus
-}
-#endif
+#define ESP32_ARDUINO // must be defined to use ESP32  Arduino framework
+
+#include "../../../../logga.h"
+
 
 /* define the filename */
 const char* log_file_name = "log1.log";

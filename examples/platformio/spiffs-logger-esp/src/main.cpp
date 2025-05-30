@@ -1,14 +1,22 @@
 #include <Arduino.h>
 #include "logga.h"
 
-const char* file = "logger.log";
+const char* filename = "/logger.log";
 uint32_t FILE_SIZE_1MB = 1048576; // 1 MB
 
 void setup() {
     Serial.begin(115200);
-    int logger_status = create_logga(file, FILE_SIZE_1MB);
+    Logga_Type_t logger = create_logga();
 
-    Serial.println(logger_status);
+    if(logger != NULL) {
+        Serial.println("Logger created OK!");
+        uint8_t logger_status = init_logga(logger,filename,FILE_SIZE_1MB);
+        Serial.printf("return value: %d\n", logger_status);
+    } else {
+        Serial.println("Logger initialization failed");
+    }
+    
+
 }
 
 void loop() {

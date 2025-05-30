@@ -6,7 +6,6 @@
  */
 
 
-
 #ifndef LOGGA_H
 #define LOGGA_H
 
@@ -27,10 +26,11 @@ typedef struct SystemTime* SystemTime_t;    /* to hold the current system time -
  */
 
 /**
- * @brief allocate teh object we are going to be using for logging
+ * @brief allocate the object we are going to be using for logging
  * @return
+ * 
  */
-uint8_t create_logga(const char* fname, uint32_t f_size);
+Logga_Type_t create_logga();
 
 /**
  * @brief init_logga initialize a logging object

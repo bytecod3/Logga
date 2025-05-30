@@ -48,23 +48,18 @@ typedef struct Logga {
  * @return
  *
  */
-uint8_t create_logga(const char* fname, uint32_t f_size) {
+Logga_Type_t create_logga() {
     Logga_Type_t ob = (Logga_Type_t) malloc(sizeof(Logga_t));
-
     if(ob != NULL) {
-        ob->_fname = fname;
-        ob->_sz = f_size;
-        if(init_logga(ob, ob->_fname, ob->_sz)) {
-            return 0xff;
-        }
-    } else {
-        return 0x00;
-    }
-
-    return 0x00;
+        return ob;
+    } 
+    return NULL;
 }
 
 uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname, uint32_t f_size) {
+    _logga_inst->_fname = fname;
+    _logga_inst->_sz = f_size;
+
     #ifdef ESP32_ARDUINO
         // todo:check for MCU target being used -> for now use esp32
         if(init_SPIFFS(_logga_inst)){
@@ -157,7 +152,7 @@ void write_log(Logga_Type_t obj, const char* t_stamp, const char* TAG, const cha
     fclose(fp);
 }
 
-void log_trace(Logga_Type_t obj,const char* tag, const char* msg) {
+void log_trace(Logga_Type_t obj, const char* tag, const char* msg) {
     const char* lvl = "TRACE";
 
     #ifdef ESP32_ARDUINO

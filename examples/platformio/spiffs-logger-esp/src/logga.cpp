@@ -110,6 +110,10 @@ uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname) {
     #endif
 }
 
+char* log_get_filepath(Logga_Type_t* _logga_inst) {
+    return _logga_inst->folder;
+}
+
 #ifdef ESP32_ARDUINO
 uint8_t init_SPIFFS(Logga_Type_t _logga_inst) {
     if(SPIFFS.begin(true)) {

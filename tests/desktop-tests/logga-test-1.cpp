@@ -3,7 +3,7 @@
 #include "../../logga.h"
 #include <string.h>
 
-#define NLOG
+//#define NLOG
 
 #ifndef NLOG
     /* create logger object */
@@ -14,18 +14,13 @@
 int main() {
 
     /* initialize logger with desired file parameters */
-    char filepath[50] = "/logger";
-    const char* filename = "/log1.log";
-
-    strcat(filepath, filename);
-    printf("filepath: %s\n", filepath);
-
+    const char* filename = "/log-file.log";
 
 #ifndef NLOG
-    init_logga(system_logger, filename, )
+    init_logga(system_logger, filename );
 #endif
 
-    std::cout <<"dragon moto testing" << '\n';
+    //std::cout <<"dragon moto testing 1..2" << '\n';
 
     return 0;
 }

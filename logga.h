@@ -5,8 +5,6 @@
  * @author Edwin Mwiti
  */
 
-
-
 #ifndef LOGGA_H
 #define LOGGA_H
 
@@ -14,6 +12,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,11 +26,16 @@ typedef struct SystemTime* SystemTime_t;    /* to hold the current system time -
 typedef enum {
     FILE_EXISTS = 2,
     FAILED_TO_CREATE_LOG_FILE,
-    FILE_CREATE_OK
-} FILE_CREATE_ERR_T;
+    FAILED_TO_CREATE_LOG_FOLDER,
+    FAILED_TO_LOG_FILE,
+    FAILED_TO_READ_FILE,
+    FAILED_TO_APPEND_FILE,
+    FILE_CREATE_OK,
+    FOLDER_CREATE_OK
+} FILE_CREATE_STATUS;
 
 /**
- * Functions
+ * Function definition
  */
 
 /**
@@ -54,6 +58,7 @@ const char* get_ntp_time(Logga_Type_t obj);
  * @brief Initialize SPIFFS file system for ESP32
  * @param _logga_inst
  * @return 1 if successful
+ *
  */
 uint8_t init_SPIFFS(Logga_Type_t _logga_inst);
 
@@ -92,6 +97,7 @@ uint8_t init_SPIFFS(Logga_Type_t _logga_inst);
   * @param MSG
   */
   void log_message(Logga_Type_t _logga_inst, unsigned long t_stamp, const char* TAG, const char* LEVEL, const char* MSG);
+  char* log_get_filepath(Logga_Type_t obj);
 void log_trace(Logga_Type_t obj, const char* tag, const char* msg);
 void log_debug(const char* tag, const char* msg);
 void log_info(const char* tag, const char* msg);

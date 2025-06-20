@@ -8,6 +8,6 @@
  * Define your architecture here
  * =============================
  */
-#define ESP32_ARDUINO 
+//#define ESP32_ARDUINO
 
 #endif

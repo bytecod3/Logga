@@ -21,10 +21,50 @@ A minimalistic data and event logging library built for both embedded and mainst
 
 ### Usage
 
+Copy the following files into your working directory:
+
+```c
+1. config.h
+2. logga.h
+3. logga.cpp
+
+```
+
 ### Desktop
 #### 1. Create logging object 
 
-The code below shows how to create logging object 
+The code below shows how to create logging object:
+```c
+
+yourfile.cpp
+
+
+#include <iostream>
+#include <stdint.h>
+#include "logga.h"
+
+//#define NLOG / to turn  on/off logging **/
+
+#ifndef NLOG
+
+#define LOG_FILE_SIZE
+Logga_Type_t system_logger = create_logga(); /* create logger object */
+const char* filename = "/log-file.log"; /* your logging filename */
+
+#endif
+
+int main() {
+    #ifndef NLOG
+        init_logga(system_logger, filename);
+    #endif
+    
+    return 0;
+}
+
+
+```
+
+
 
 ## Tests Done 
 ### ESP32 

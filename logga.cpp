@@ -89,7 +89,7 @@ uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname) {
             if(fp != NULL) {
                 printf("File exists\n ");
                 fclose(fp);
-                //return FILE_CREATE_STATUS::FILE_EXISTS; // returns 2
+                return FILE_CREATE_STATUS::FILE_EXISTS; // returns 2
 
             } else {
                 /* file does not exist create a file with this size */
@@ -103,23 +103,19 @@ uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname) {
                 if(fp != NULL) {
                     printf("File created success");
 
+//                    /* todo: check for embedded */
+//                    #if defined(_WIN32)
+//                        fseek(f_ptr, MAX_FILE_SIZE, SEEK_SET);
+//                        fputs((const char *)'\0', f_ptr);
+//                        fseek(f_ptr, 0, SEEK_SET);
+//                    #elif defined(linux)
+//                        ftruncate(f_ptr, f_size);
+//                    #endif
+
                     fclose(fp);
                 } else {
                     printf("Failed to create file");
                 }
-
-//                strcat(_logga_inst->filepath, _logga_inst->_fname);
-//                FILE* f_ptr = fopen(_logga_inst->filepath, "a");
-//                #if defined(_WIN32)
-//                    fseek(f_ptr, MAX_FILE_SIZE, SEEK_SET);
-//                    fputs((const char *)'\0', f_ptr);
-//                    fseek(f_ptr, 0, SEEK_SET);
-//                #elif defined(linux)
-//                    ftruncate(f_ptr, f_size);
-//                #endif
-//
-//                fprintf(f_ptr, "----log File----\r\n");
-//                fclose(f_ptr);
 
             }
 
@@ -191,8 +187,6 @@ uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname) {
 
                 file = root.openNextFile();
             }
-
-
     }
 #endif
 
@@ -252,8 +246,8 @@ const char* get_ntp_time(Logga_Type_t _inst){
 }
 #endif // ESP32_ARDUINO
 
-void write_log(Logga_Type_t obj, const char* t_stamp, const char* TAG, const char* LEVEL, const char* MSG) {
-    FILE* fp = fopen(obj->_fname, "a");
+void write_log(Logga_Type_t _logga_inst, const char* t_stamp, const char* TAG, const char* LEVEL, const char* MSG) {
+    FILE* fp = fopen(_logga_inst->_fname, "a");
 
     /* create message */
     char msg_buf[256];

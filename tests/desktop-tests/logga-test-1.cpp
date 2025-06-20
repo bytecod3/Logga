@@ -18,6 +18,7 @@ int main() {
 
 #ifndef NLOG
     init_logga(system_logger, filename );
+
 #endif
 
     //std::cout <<"dragon moto testing 1..2" << '\n';

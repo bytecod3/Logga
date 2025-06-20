@@ -21,6 +21,11 @@ A minimalistic data and event logging library built for both embedded and mainst
 
 ### Usage
 
+### Desktop
+#### 1. Create logging object 
+
+The code below shows how to create logging object 
+
 ## Tests Done 
 ### ESP32 
 #### SPIFFS init

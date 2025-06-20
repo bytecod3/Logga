@@ -64,6 +64,10 @@ uint8_t init_SPIFFS(Logga_Type_t _logga_inst);
   */
  void check_num_files(Logga_Type_t _logga_inst, const char* dir_name);
 
+ void list_dir(fs::FS &fs, const char* dirname, uint8_t levels);
+ void logga_list_dir(Logga_Type_t _logga_inst);
+
+
  /**
   * @brief writes the log to filename passed during creation
   * @param t_stamp
@@ -82,7 +86,8 @@ uint8_t init_SPIFFS(Logga_Type_t _logga_inst);
   * @param LEVEL
   * @param MSG
   */
-  void log_message(Logga_Type_t _logga_inst, unsigned long t_stamp, const char* TAG, const char* LEVEL, const char* MSG);
+
+void log_message(Logga_Type_t _logga_inst, unsigned long t_stamp, const char* TAG, const char* LEVEL, const char* MSG);
 void log_trace(Logga_Type_t obj, const char* tag, const char* msg);
 void log_debug(const char* tag, const char* msg);
 void log_info(const char* tag, const char* msg);

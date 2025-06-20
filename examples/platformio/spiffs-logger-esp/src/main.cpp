@@ -15,6 +15,9 @@ void setup() {
     } else {
         Serial.println("Logger initialization failed");
     }
+
+    // you can list existing file here if you want
+    logger.list_dir(SPIFFS,)
     
 
 }

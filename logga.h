@@ -22,6 +22,14 @@ extern "C" {
 typedef struct Logga* Logga_Type_t;         /* forward declare Logga structure */
 typedef struct SystemTime* SystemTime_t;    /* to hold the current system time -> will be passed in by the user*/
 
+#define MAX_FILE_SIZE 2097152
+
+typedef enum {
+    FILE_EXISTS = 2,
+    FAILED_TO_CREATE_LOG_FILE,
+    FILE_CREATE_OK
+} FILE_CREATE_ERR_T;
+
 /**
  * Functions
  */
@@ -39,7 +47,7 @@ Logga_Type_t create_logga();
  * @param fname filename to log to
  * @param f_size size of the file to create
  */
-uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname, uint32_t f_size);
+uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname);
 const char* get_ntp_time(Logga_Type_t obj);
 
 /**

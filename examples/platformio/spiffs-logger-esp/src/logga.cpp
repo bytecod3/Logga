@@ -20,10 +20,14 @@
     // check desktop
     #include <windows.h>
     #include <stdio.h>
+    #include <string.h>
     #include <tchar.h>
+    #include <sys/stat.h>
+    #include <dirent.h>
+    #include <stdbool.h>
 
 #elif defined(linux)
-    #include <unistd.h>
+    #include <unistd.h> /* todo: fixme */
     
 //#elif check for linux
 #else 
@@ -34,6 +38,7 @@ static const char* ntp_server = "pool.ntp.org";
 static unsigned long epoch_time;
 
 typedef struct Logga {
+    char folder[50];
     const char* _fname;
     uint32_t _sz;
     #if defined(ESP32_ARDUINO)
@@ -56,9 +61,10 @@ Logga_Type_t create_logga() {
     return NULL;
 }
 
-uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname, uint32_t f_size) {
+uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname) {
+
+    strcpy(_logga_inst->filepath, "/log/"); /* default folder to separate log files from other files */
     _logga_inst->_fname = fname;
-    _logga_inst->_sz = f_size;
 
     #ifdef ESP32_ARDUINO
         // todo:check for MCU target being used -> for now use esp32
@@ -68,18 +74,39 @@ uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname, uint32_t f_size)
             return 0x00;
         }
     #else // desktop C
-        /* create a file with this size */
-        FILE* fp = fopen(_logga_inst->_fname, "a");
-        #if defined(_WIN32)
-            fseek(fp, f_size, SEEK_SET);
-            fputs('\0', fp);
-            fseek(fp, 0);
-        #elif defined(linux)  
-            ftruncate(fp, f_size);
-        #endif
-        
-        fprintf(fp, "----log File----");
-        fclose(fp);
+        /* separate the log files into a new folder */
+        DIR* dir = opendir(_logga_inst->filepath);
+        if(dir) {
+            FILE* fp = fopen(_logga_inst->filename, "r");
+            bool file_exists = false;
+
+            if(fp != NULL) {
+                file_exists = true;
+                return FILE_CREATE_ERR_T::FILE_EXISTS; // returns 2
+
+            } else {
+                /* file does not exist create a file with this size */
+                /* TODO: check allowed file size */
+
+                strcat(_logga_inst->filepath, _logga_inst->filename);
+                FILE* f_ptr = fopen(_logga_inst->filepath, "a");
+                #if defined(_WIN32)
+                    fseek(f_ptr, MAX_FILE_SIZE, SEEK_SET);
+                    fputs('\0', f_ptr);
+                    fseek(f_ptr, 0);
+                #elif defined(linux)
+                    ftruncate(f_ptr, f_size);
+                #endif
+
+                fprintf(f_ptr, "----log File----\r\n");
+                fclose(f_ptr);
+            }
+
+            closedir(dir);
+        } else if(ENOENT == errno){
+            mkdir(_logga_inst->filepath);
+        }
+
     #endif
 }
 
@@ -99,6 +126,57 @@ uint8_t init_SPIFFS(Logga_Type_t _logga_inst) {
     }
 
 }
+
+void list_dir(fs::FS &fs, const char* dirname, uint8_t levels) {
+#ifdef ESP32_ARDUINO
+    Serial.println("Listing directory: %s\r\n", dirname);
+    File root = fs.open(dirname);
+    if(!root) {
+        Serial.println(" - Failed to open directory");
+        return;
+    }
+
+    if (!root.isDirectory()) {
+        Serial.println(" - not a directory");
+        return;
+    }
+
+    File file = root.openNextFile();
+    while(file) {
+        if(file.isDirectory()) {
+            Serialprint("   DIR:    ");
+            Serial.println(file.name());
+            if(levels) {
+                listDir(fs, file.name(), levels - 1);
+            }
+        } else {
+            Serial.print("  FILE:   ");
+            Serial.print(file.name());
+            Serial.print("      SIZE:   ");
+            Serial.println(file.size());
+        }
+        file = root.openNextFile();
+    }
+#endif
+}
+
+void logga_list_dir(Logga_Type_t _logga_inst) {
+    if(_logga_inst == NULL){
+        return;
+    }else {
+        #ifdef ESP32_ARDUINO
+            _logga_inst->list_dir(SPIFFS, "/", 1);
+        #endif
+    }
+}
+
+
+void check_num_files(Logga_Type_t _logga_inst, const char* dir_name) {
+#ifdef ESP32_ARDUINO
+
+#endif
+}
+
 
 const char* get_ntp_time(Logga_Type_t _inst){
 

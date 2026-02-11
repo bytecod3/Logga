@@ -20,6 +20,8 @@
     #warning "No valid platfrom defined."
 #endif
 
+static const char* ntp_server = "pool.ntp.org";
+static unsigned long epoch_time;
 
 
 Logga::Logga(char* f_name, char* dir_name="/") {
@@ -35,7 +37,7 @@ Logga::Logga(char* f_name, char* dir_name="/") {
      #endif
 }
 
-FILE_CREATE_STATUS Logga::logga_init() {
+uint8_t Logga::logga_init() {
     /* use SPIFFS to store file */
     /* todo: check for file system */
     if(SPIFFS.begin(true)) {
@@ -47,14 +49,8 @@ FILE_CREATE_STATUS Logga::logga_init() {
             //this->_get_time();
             sprintf(_f_header, "---Log File---");
             f.print(_f_header);
-
-            return LOGGA_FILE_CREATE_OK;
-        } else {
-            return LOGGA_FAILED_TO_CREATE_LOG_FILE;
         }
 
-    } else {
-        return LOGGA_SPIFFS_FAILED_TO_OPEN;
     }
 }
 

@@ -18,6 +18,14 @@ A minimalistic data and event logging library built for both embedded and mainst
 - Follows MISRA-C standard
 
 ### How it works
+#### Embedded
+1. To do basic logging, this library checks the config.h file to know which framework you are using. For devices that are not connected to the internet, you can enable and disable NTP by modifying the config.h header.(see example below)
+
+2. You can log into both the internal device memory, if your device has enough internal memory, such as NVS for ESP32, or you can use SD card to do the logging. 
+
+
+
+
 
 ### Usage
 
@@ -30,8 +38,23 @@ Copy the following files into your working directory:
 
 ```
 
+### Embedded
+#### PlatformIO
+If using platformio for your project, follow the steps below:
+1. Copy the following files into your project root. You can put them in ```include``` and ```src``` folders respectively
+```
+1. logga.h
+2. logga.cpp
+3. config.h
+```
+2. Include ```logga.h``` into your main.
+```
+#include "logga.h
+```
+
+
 ### Desktop
-#### 1. Create logging object 
+#### Create logging object 
 
 The code below shows how to create logging object:
 ```c

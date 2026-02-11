@@ -23,23 +23,23 @@ typedef struct SystemTime* SystemTime_t;    /* to hold the current system time -
 
 #define MAX_FILE_SIZE 2097152
 
-typedef enum {
-    LOGGA_FILE_EXISTS = 2,
-    LOGGA_FAILED_TO_CREATE_LOG_FILE,
-    LOGGA_FAILED_TO_CREATE_LOG_FOLDER,
-    LOGGA_FAILED_TO_LOG_FILE,
-    LOGGA_FAILED_TO_READ_FILE,
-    LOGGA_FAILED_TO_APPEND_FILE,
-    LOGGA_FILE_CREATE_OK,
-    LOGGA_FOLDER_CREATE_OK, 
-    LOGGA_SPIFFS_FAILED_TO_OPEN
-} FILE_CREATE_STATUS;
+// typedef enum {
+//     LOGGA_FILE_EXISTS = 2,
+//     LOGGA_FAILED_TO_CREATE_LOG_FILE,
+//     LOGGA_FAILED_TO_CREATE_LOG_FOLDER,
+//     LOGGA_FAILED_TO_LOG_FILE,
+//     LOGGA_FAILED_TO_READ_FILE,
+//     LOGGA_FAILED_TO_APPEND_FILE,
+//     LOGGA_FILE_CREATE_OK,
+//     LOGGA_FOLDER_CREATE_OK, 
+//     LOGGA_SPIFFS_FAILED_TO_OPEN
+// } FILE_CREATE_STATUS;
 
 
 class Logga {
     private:
         char* _f_name;
-        const char* _dir_name;
+        char* _dir_name;
         uint32_t _f_size;
         const char* _ntp_server;
         void _get_time(void);
@@ -47,12 +47,14 @@ class Logga {
 
     public:
         Logga(char* f_name, char* dir_name);
-        FILE_CREATE_STATUS logga_init();
+        uint8_t logga_init();
         uint8_t logga_write(char* d);
         uint8_t logga_dump(char* fname);
         uint32_t logga_get_file_size(); 
 
 };
+
+
 
 /**
  * Function definition

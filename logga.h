@@ -38,7 +38,7 @@ typedef enum {
 
 class Logga {
     private:
-        char* _f_name;
+        const char* _f_name;
         const char* _dir_name;
         uint32_t _f_size;
         const char* _ntp_server;
@@ -46,7 +46,7 @@ class Logga {
         void _init_spiffs();
 
     public:
-        Logga(char* f_name, char* dir_name);
+        Logga(char* f_name, const char* dir_name);
         FILE_CREATE_STATUS logga_init();
         uint8_t logga_write(char* d);
         uint8_t logga_dump(char* fname);

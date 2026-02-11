@@ -23,22 +23,24 @@ typedef struct SystemTime* SystemTime_t;    /* to hold the current system time -
 
 #define MAX_FILE_SIZE 2097152
 
-typedef enum {
-    LOGGA_FILE_EXISTS                       = 2,
-    LOGGA_FAILED_TO_CREATE_LOG_FILE         = 3,
-    LOGGA_FAILED_TO_CREATE_LOG_FOLDER       = 4,
-    LOGGA_FAILED_TO_LOG_FILE                = 5,
-    LOGGA_FAILED_TO_READ_FILE               = 6,
-    LOGGA_FAILED_TO_APPEND_FILE             = 7,
-    LOGGA_FILE_CREATE_OK                    = 8,
-    LOGGA_FOLDER_CREATE_OK                  = 9, 
-    LOGGA_SPIFFS_FAILED_TO_OPEN             = 10
+typedef enum _file_create_status_enum {
+    LOGGA_FILE_EXISTS                       = 0,
+    LOGGA_FAILED_TO_CREATE_LOG_FILE         = 1,
+    LOGGA_FAILED_TO_CREATE_LOG_FOLDER       = 2,
+    LOGGA_FAILED_TO_LOG_FILE                = 3,
+    LOGGA_FAILED_TO_READ_FILE               = 4,
+    LOGGA_FAILED_TO_APPEND_FILE             = 5,
+    LOGGA_FAILED_TO_OPEN_FILE               = 6,
+    LOGGA_FILE_CREATE_OK                    = 7,
+    LOGGA_FOLDER_CREATE_OK                  = 8, 
+    LOGGA_FAILED_TO_OPEN_SPIFFS             = 9,
+    LOGGA_INVALID_FILENAME                  = 10
 } FILE_CREATE_STATUS;
 
 
 class Logga {
     private:
-        char* _f_name;
+        const char* _f_name;
         const char* _dir_name;
         uint32_t _f_size;
         const char* _ntp_server;
@@ -46,10 +48,10 @@ class Logga {
         void _init_spiffs();
 
     public:
-        Logga(char* f_name, const char* dir_name);
+        Logga(const char* f_name, const char* dir_name);
         FILE_CREATE_STATUS logga_init();
         uint8_t logga_write(char* d);
-        uint8_t logga_dump(char* fname);
+        FILE_CREATE_STATUS logga_dump(const char* fname);
         uint32_t logga_get_file_size(); 
 
 };

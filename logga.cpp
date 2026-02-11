@@ -20,9 +20,11 @@
     #warning "No valid platfrom defined."
 #endif
 
+/**
+ * @brief The filename must begin with "/". for example "/file1.log"
+ */
 
-
-Logga::Logga( char* f_name, const char* dir_name="/") {
+Logga::Logga( const char* f_name, const char* dir_name="/") {
 
     #if ESP32_ARDUINO
 
@@ -55,7 +57,27 @@ FILE_CREATE_STATUS Logga::logga_init() {
             }
 
         } else {
-            return LOGGA_SPIFFS_FAILED_TO_OPEN;
+            return LOGGA_FAILED_TO_OPEN_SPIFFS;
+        }
+
+    #endif
+}
+
+FILE_CREATE_STATUS Logga::logga_dump(const char* f_name) {
+    #if ESP32_ARDUINO
+
+        if(f_name != NULL) {
+            File f = SPIFFS.open(f_name);
+            if(!f || f.isDirectory()) {
+                return LOGGA_FAILED_TO_OPEN_FILE;
+            } else {
+                while(f.available()) {
+                    Serial.write(f.read());
+                }
+            }
+
+        } else {
+            return LOGGA_INVALID_FILENAME;
         }
 
     #endif

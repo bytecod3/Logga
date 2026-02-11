@@ -1,7 +1,7 @@
 /**
  * @file logga.cpp
  * @brief implements logga.h
- * @author Edwin Mwiti
+ * @author Edwin M.
  *
  */
 
@@ -14,175 +14,100 @@
     #include <time.h>
     #include <FS.h>
 
-#elif defined(_WIN32)
-    #include <windows.h>
-    #include <stdio.h>
-    #include <string.h>
-    #include <tchar.h>
-    #include <sys/stat.h>
-    #include <dirent.h>
-    #include <stdbool.h>
 
-#elif defined(linux)
-    #include <unistd.h> /* todo: fixme */
+// todo: check for other architectures
 
-//#elif check for linux
 #else
-
     #warning "No valid platfrom defined."
-
 #endif
 
 static const char* ntp_server = "pool.ntp.org";
 static unsigned long epoch_time;
 
+/* represent a logging object */
 typedef struct Logga {
-    char filepath[50];
+    char filepath[20];
     const char* _fname;
     uint32_t _sz;
-#if defined(ESP32_ARDUINO)
-    char* tstamp;
-#endif
+    #if defined(ESP32_ARDUINO)
+        char* tstamp;
+    #endif
 } Logga_t;
 
 /**
- *
- * @brief to be used only for desktop applications where dynamic allocation is not a
- * big memory issue
- * @return
- *
- */
-Logga_Type_t create_logga() {
-    Logga_Type_t ob = (Logga_Type_t) malloc(sizeof(Logga_t));
-    if(ob != NULL) {
-        return ob;
-    }
-    return NULL;
-}
-
+* @brief initializes the logga object depending on the chosen architecture
+*/
 uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname) {
-
-    strcpy(_logga_inst->filepath, "log"); /* default folder to separate log files from other files */
+    strcpy(_logga_inst->filepath, "logs");         /* default folder to separate log files from other files */
     _logga_inst->_fname = fname;
 
-#ifdef ESP32_ARDUINO
-    // todo:check for MCU target being used -> for now use esp32
-    if(init_SPIFFS(_logga_inst)){
-        return 0xff;
-    } else {
-        return 0x00;
-    }
-
-#else
-    /* separate the log files into a new folder */
-        DIR* dir = opendir(_logga_inst->filepath);
-
-        if (dir != NULL) {
-            printf("Dir %s exists \r\n", _logga_inst->filepath);
-            char path[50];
-            strcpy(path, _logga_inst->filepath);
-            strcat(path, _logga_inst->_fname);
-
-            printf("%s\n", path);
-            FILE* fp = fopen(path, "w"); /* create file */
-
-            if(fp != NULL) {
-                printf("File exists\n ");
-                fclose(fp);
-                return FILE_CREATE_STATUS::FILE_EXISTS; // returns 2
-
-            } else {
-                /* file does not exist create a file with this size */
-                /* TODO: check allowed file size */
-
-                printf("File does not exist. creating file \n");
-
-                fp = fopen(path, "w");
-
-                /* confirm creation */
-                if(fp != NULL) {
-                    printf("File created success");
-
-//                    /* todo: check for embedded */
-//                    #if defined(_WIN32)
-//                        fseek(f_ptr, MAX_FILE_SIZE, SEEK_SET);
-//                        fputs((const char *)'\0', f_ptr);
-//                        fseek(f_ptr, 0, SEEK_SET);
-//                    #elif defined(linux)
-//                        ftruncate(f_ptr, f_size);
-//                    #endif
-
-                    fclose(fp);
-                } else {
-                    printf("Failed to create file");
-                }
-
-            }
-
-            closedir(dir);
-            return FILE_CREATE_STATUS::FILE_CREATE_OK;
-
+    #ifdef ESP32_ARDUINO
+        if(init_SPIFFS(_logga_inst)){
+            return 1;
         } else {
-            printf("filepath: %s\n", _logga_inst->filepath);
-            mkdir(_logga_inst->filepath);
-            //printf("Dir does not exist. Created dir: %s \n");
-            return FILE_CREATE_STATUS::FOLDER_CREATE_OK;
+            return 0;
         }
-
-        return 0x00; /* should not be called */
-
-#endif
+    #endif
 }
 
 #ifdef ESP32_ARDUINO
-    uint8_t init_SPIFFS(Logga_Type_t _logga_inst) {
-        if(SPIFFS.begin(true)) {
-            File log_file = SPIFFS.open(_logga_inst->_fname, "a");
-            if (log_file) {
-                log_file.print("----log file----");
-                log_file.close();
-                return 0xff;
-            } else {
-                return 0x00;
-            }
+uint8_t init_SPIFFS(Logga_Type_t _logga_inst) {
+    if(SPIFFS.begin(true)) {
+        File log_file = SPIFFS.open(_logga_inst->_fname, "a");
+        if (log_file) {
+            log_file.print("----log file----");
+            log_file.close();
+            return 1;
         } else {
-            return 0x00;
+            return 0;
         }
-
+    } else {
+        return 0;
     }
+
+}
 #endif
 
 #ifdef ESP32_ARDUINO
     void list_dir(fs::FS &fs, const char* dirname, uint8_t levels) {
-
-
-            Serial.println("Listing directory: %s\r\n", dirname);
+            #if DEBUG
+                Serial.println("Listing directory: %s\r\n", dirname);
+            #endif
             File root = fs.open(dirname);
 
             if(!root) {
-                Serial.println(" - Failed to open directory");
+                #if DEBUG
+                    Serial.println(" - Failed to open directory");
+                #endif
                 return;
             }
 
             if (!root.isDirectory()) {
-                Serial.println(" - not a directory");
+                #if DEBUG
+                    Serial.println(" - not a directory");
+                #endif
                 return;
             }
 
             File file = root.openNextFile();
             while(file) {
                 if(file.isDirectory()) {
-                    Serialprint("   DIR:    ");
-                    Serial.println(file.name());
+                    #if DEBUG
+                        Serialprint("   DIR:    ");
+                        Serial.println(file.name());
+                    #endif
+            
                     if(levels) {
                         listDir(fs, file.name(), levels - 1);
                     }
 
                 } else {
-                    Serial.print("  FILE:   ");
-                    Serial.print(file.name());
-                    Serial.print("      SIZE:   ");
-                    Serial.println(file.size());
+                    #if DEBUG
+                        Serial.print("  FILE:   ");
+                        Serial.print(file.name());
+                        Serial.print("      SIZE:   ");
+                        Serial.println(file.size());
+                    #endif
                 }
 
                 file = root.openNextFile();
@@ -190,9 +115,13 @@ uint8_t init_logga(Logga_Type_t _logga_inst, const char* fname) {
     }
 #endif
 
+/**
+*/
+
 void logga_list_dir(Logga_Type_t _logga_inst) {
     if(_logga_inst == NULL){
         return;
+
     }else {
 #ifdef ESP32_ARDUINO
         _logga_inst->list_dir(SPIFFS, "/", 1);

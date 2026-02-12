@@ -34,8 +34,12 @@ typedef enum _file_create_status_enum {
     LOGGA_FILE_CREATE_OK                    = 7,
     LOGGA_FOLDER_CREATE_OK                  = 8, 
     LOGGA_FAILED_TO_OPEN_SPIFFS             = 9,
-    LOGGA_INVALID_FILENAME                  = 10
-} FILE_CREATE_STATUS;
+    LOGGA_INVALID_FILENAME                  = 10,
+    LOGGA_FILE_DELETE_OK                    = 11,
+    LOGGA_FAILED_TO_DELETE_FILE             = 12,
+    LOGGA_FILE_CLEARED_OK                   = 13,
+    LOGGA_FILE_DUMP_OK                      = 14
+} FILE_STATUS;
 
 
 class Logga {
@@ -49,10 +53,12 @@ class Logga {
 
     public:
         Logga(const char* f_name, const char* dir_name);
-        FILE_CREATE_STATUS logga_init();
+        FILE_STATUS logga_init();
         uint8_t logga_write(char* d);
-        FILE_CREATE_STATUS logga_dump(const char* fname);
+        FILE_STATUS logga_dump(const char* fname);
         uint32_t logga_get_file_size(); 
+        FILE_STATUS logga_delete(const char* f_name);
+        FILE_STATUS logga_clear_file(const char* f_name);
 
 };
 

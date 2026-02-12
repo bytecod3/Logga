@@ -15,7 +15,6 @@
     #include <FS.h>
 
 // todo: check for other architectures
-
 #else
     #warning "No valid platfrom defined."
 #endif
@@ -23,7 +22,6 @@
 /**
  * @brief The filename must begin with "/". for example "/file1.log"
  */
-
 Logga::Logga( const char* f_name, const char* dir_name="/") {
 
     #if ESP32_ARDUINO
@@ -37,7 +35,7 @@ Logga::Logga( const char* f_name, const char* dir_name="/") {
      #endif
 }
 
-FILE_CREATE_STATUS Logga::logga_init() {
+FILE_STATUS Logga::logga_init() {
     #if ESP32_ARDUINO
         /* use SPIFFS to store file */
         /* todo: check for file system */
@@ -48,8 +46,9 @@ FILE_CREATE_STATUS Logga::logga_init() {
                 /* prepare file header */
                 char _f_header[30];
                 //this->_get_time();
-                sprintf(_f_header, "---Log File---");
+                sprintf(_f_header, "---Log File---\r\n");
                 f.print(_f_header);
+                f.close();
 
                 return LOGGA_FILE_CREATE_OK;
             } else {
@@ -63,7 +62,7 @@ FILE_CREATE_STATUS Logga::logga_init() {
     #endif
 }
 
-FILE_CREATE_STATUS Logga::logga_dump(const char* f_name) {
+FILE_STATUS Logga::logga_dump(const char* f_name) {
     #if ESP32_ARDUINO
 
         if(f_name != NULL) {
@@ -76,10 +75,30 @@ FILE_CREATE_STATUS Logga::logga_dump(const char* f_name) {
                 }
             }
 
+             f.close();
+
+             return LOGGA_FILE_DUMP_OK;
+
+
         } else {
             return LOGGA_INVALID_FILENAME;
         }
 
+    #endif
+}
+
+FILE_STATUS Logga::logga_delete(const char* f_name) {
+    #if ESP32_ARDUINO
+        if(f_name != NULL) {
+            if(SPIFFS.remove(f_name)){
+                return LOGGA_FILE_DELETE_OK;
+            } else {
+                return LOGGA_FAILED_TO_DELETE_FILE;
+            }
+
+        } else {
+            return LOGGA_INVALID_FILENAME;
+        }
     #endif
 }
 
@@ -90,7 +109,24 @@ void Logga::_get_time(void) {
     #endif
 }
 
-
+FILE_STATUS Logga::logga_clear_file(const char* f_name) {
+    #if ESP32_ARDUINO
+        if(f_name != NULL) {
+            File f = SPIFFS.open(f_name, "w");
+            if(!f || f.isDirectory()) {
+                return LOGGA_FAILED_TO_OPEN_FILE;
+            } else {
+                /* opening a file in write mode automatically clears the file contents if the file exists */
+                
+                f.write('\0');
+                f.close();
+                return LOGGA_FILE_CLEARED_OK;
+            }
+        } else {
+            return LOGGA_INVALID_FILENAME;
+        }
+    #endif
+}
 
 // /* represents a logging object */
 // typedef struct Logga {
